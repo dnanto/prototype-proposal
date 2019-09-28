@@ -13,4 +13,4 @@ blastdbcmd -db ../data/db -entry all -outfmt "%a %l" | \
 awk '$2 != "NA" { print $1; }' def.tsv | \
 	blastdbcmd -db ../data/db -entry_batch - | \
 	sed -f def.sed | \
-	mafft --auto --adjustdirection --threads -1 - > msa.fna
+	mafft --auto --adjustdirection --thread -1 - > msa.fna
