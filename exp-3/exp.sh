@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-blastdbcmd -db ../data/db -entry FJ643676.1 -range 18233-21073 > qry.fna
+blastdbcmd -db ../data/db -entry FJ643676.1 -range 30775-31752 > qry.fna
 
 blastn -task megablast -query qry.fna -db ../data/db -outfmt "6 saccver" | \
 	blastdbcmd -db ../data/db -entry_batch - > lib.fna
