@@ -7,7 +7,7 @@ blastn -task megablast -query qry.fna -db ../data/db -outfmt "6 saccver" | \
 
 glsearch36 -m 8C -T 8 qry.fna lib.fna > hits.tsv
 
-awk '{ OFS = "\t" } /^[^#]/ { print $2, $9, $10 }' hits.tsv | \
+awk '{ OFS = "\t" } /^[^#]/ && $3 >= 90 { print $2, $9, $10 }' hits.tsv | \
 	sort -b | \
 	join -1 1 -t $'\t' - ../data/date.tsv | \
 	awk '$4 != "NA"' | 
