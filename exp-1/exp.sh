@@ -14,3 +14,5 @@ awk '$2 != "NA" { print $1; }' def.tsv | \
 	blastdbcmd -db ../data/db -entry_batch - | \
 	sed -f def.sed | \
 	mafft --auto --adjustdirection --thread -1 - > msa.fna
+
+iqtree -s msa.fna -pre phy -alrt 1000 -bb 1000 -bnni -nt AUTO
