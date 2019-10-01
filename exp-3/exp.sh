@@ -16,12 +16,12 @@ awk '{ OFS = "\t" } /^[^#]/ && $3 >= 90 { print $2, $9, $10 }' hits.tsv | \
 
 awk '{ printf "%s %d-%d\n", $1, $2, $3 }' def.tsv | \
 	blastdbcmd -db ../data/db -entry_batch - | \
-	sed -f def.sed | \
+	sed -e '/^>/ s/ .*//g' -f def.sed | \
 	mafft --auto --adjustdirection --thread -1 - > msa-1.fna 2> msa-1.log
 
 awk '$4 != "NA" { printf "%s %d-%d\n", $1, $2, $3 }' def.tsv | \
 	blastdbcmd -db ../data/db -entry_batch - | \
-	sed -f def.sed | \
+	sed -e '/^>/ s/ .*//g' -f def.sed | \
 	mafft --auto --adjustdirection --thread -1 - > msa-2.fna 2> msa-2.log
 
 rm -rf phy-1.* && iqtree -s msa-1.fna -pre phy-1 -alrt 1000 -bb 1000 -bnni -nt AUTO

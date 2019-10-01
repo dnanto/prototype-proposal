@@ -10,12 +10,12 @@ blastdbcmd -db ../data/db -entry all -outfmt "%a %l" | \
 
 cut -f 1 date.tsv | \
 	blastdbcmd -db ../data/db -entry_batch - | \
-	sed -f def.sed | \
+	sed -e '/^>/ s/ .*//g' -f def.sed | \
 	mafft --auto --adjustdirection --thread -1 - > msa-1.fna 2> msa-1.log
 
 awk '$2 != "NA"' date.tsv | \
 	blastdbcmd -db ../data/db -entry_batch - | \
-	sed -f def.sed | \
+	sed -e '/^>/ s/ .*//g' -f def.sed | \
 	mafft --auto --adjustdirection --thread -1 - > msa-2.fna 2> msa-2.log
 
 rm -rf phy-1.* && iqtree -s msa-1.fna -pre phy-1 -alrt 1000 -bb 1000 -bnni -nt AUTO
