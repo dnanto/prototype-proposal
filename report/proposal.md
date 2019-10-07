@@ -34,8 +34,35 @@ The query ran a series of filters to transform the JSON into a tab-separated fil
 
 The full genome extraction method involved a series of piped commands. The **blastdbcmd** program dumped a space-separated list of accession-length pairs. Next, **awk** selected sequences with lengths greater than or equal to 34 kbp.
 
-The gene extraction method required a query sequence. The **blastdbmcd** program generated the query for each gene based on a reference accession and sequence coordinates. The Bash script  two-step alignment process extracted the set of homologous genes. The first local alignment step 
+The gene extraction method required a query sequence. The **blastdbmcd** program generated the query for each gene based on a reference accession and sequence coordinates…
 
+# Alignment
 
+The MAFFT program performed multiple sequence alignments (Katoh, 2002). MAFFT achieves performance gains via multithreading while maintaining accuracy via application of the Fast Fourier Transform on the sequence data to quickly identify homologous regions. Parameters included the --auto and --adjustdirection flags. The former automatically sets algorithm heuristics based on the sequence data and the latter automatically adjusts sequence direction for each entry if the reverse complement is optimal. The calling script redirected standard error into a log file to record alignment progress and heuristic selection. 
+
+# Phylogeny
+
+The IQ-TREE program inferred phylogenies (Nguyen et al., 2015). The program performed a series of likelihood tests to select the optimal number of threads and sequence evolution model based on the input data. The former compared the effect of adding additional threads on efficiency and the latter exploited the ModelFinder algorithm to estimate the optimal substitution model (Kalyaanamoorthy et al., 2017). Parameters included the -alrt and -bb flags to set the number of bootstrap replicates to 1,000 for the approximate likelihood ratio test of branches (Anisimova et al., 2011) and branch support (Hoang et al., 2018). The -bnni parameter also reduced the risk of model violations associated with ultrafast bootstrap testing via nearest neighbor interchange. The program automatically created a log file and exported the maximum likelihood tree in a variety of formats, including Newick.
+
+## Molecular Clock
+
+Testing the strict molecular clock hypothesis on the genome, fiber, and hexon nucleotide sequences of each species required the TempEst (Rambaut et al., 2016) and BEAST (Drummond and Bouckaert, 2015). The programs evaluated the clock signal and estimated model parameters respectively. A filtering step removed sequences lacking the collection_date metadata.
+
+The TempEst program tests the strength of the strict molecular clock hypothesis for a given phylogeny. It plots the taxon date against the root-to-tip patristic distance and fits a regression line with an objective function that optimizes the correlation coefficient, R-squared value, or mean-squared residuals. This is an interactive tool that facilitates the identification of outliers that may result from incorrect collection dates, vaccine strains, or contaminated sequence data. Model parameters are only useful for data exploration since the variables are dependent. Development of an R script automated this process by plotting the model for the cross product of root-to-tip distance metrics and model objective functions. The script invoked the rtt and distRoot function of the ape (Paradis et al., 2019) and adephylo (Jombart et al., 2017) packages.
+
+The BEAUti program is a graphical tool that outputs BEAST model parameters as XML files.
 
 # References
+
+*	Anisimova, M., Gil, M., Dufayard, J.-F., Dessimoz, C., and Gascuel, O. (2011). Survey of Branch Support Methods Demonstrates Accuracy, Power, and Robustness of Fast Likelihood-based Approximation Schemes. Syst. Biol. 60, 685–699.
+*	Drummond, A.J., and Bouckaert, R.R. (2015). Bayesian Evolutionary Analysis with BEAST (Cambridge: Cambridge University Press).
+*	Hoang, D.T., Chernomor, O., von Haeseler, A., Minh, B.Q., and Vinh, L.S. (2018). UFBoot2: Improving the Ultrafast Bootstrap Approximation. Mol. Biol. Evol. 35, 518–522.
+*	Jombart, T., Dray, S., and Bilgrau, A.E. (2017). adephylo: Exploratory Analyses for the Phylogenetic Comparative Method.
+*	Kalyaanamoorthy, S., Minh, B.Q., Wong, T.K.F., von Haeseler, A., and Jermiin, L.S. (2017). ModelFinder: fast model selection for accurate phylogenetic estimates. Nat. Methods 14, 587–589.
+*	Katoh, K. (2002). MAFFT: a novel method for rapid multiple sequence alignment based on fast Fourier transform. Nucleic Acids Res. 30, 3059–3066.
+*	Nguyen, L.-T., Schmidt, H.A., von Haeseler, A., and Minh, B.Q. (2015). IQ-TREE: A Fast and Effective Stochastic Algorithm for Estimating Maximum-Likelihood Phylogenies. Mol. Biol. Evol. 32, 268–274.
+*	Paradis, E., Blomberg, S., Bolker, B., Brown, J., Claude, J., Cuong, H.S., Desper, R., Didier, G., Durand, B., Dutheil, J., et al. (2019). ape: Analyses of Phylogenetics and Evolution.
+*	Rambaut, A., Lam, T.T., Max Carvalho, L., and Pybus, O.G. (2016). Exploring the temporal structure of heterochronous sequences using TempEst (formerly Path-O-Gen). Virus Evol. 2.
+*	Romiti, M., and Cooper, P. (2011). Search Field Descriptions for Sequence Database (National Center for Biotechnology Information (US)).
+*	Spinu, V., Grolemund, G., and Wickham, H. (2018). lubridate: Make Dealing with Dates a Little Easier.
+*	Wickham, H. (2017). tidyverse: Easily Install and Load the “Tidyverse.”
