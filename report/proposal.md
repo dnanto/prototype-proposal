@@ -40,7 +40,7 @@ For both methods, a series of piped **awk**, **sort**, **join** invocations gene
 
 ### Alignment
 
-The MAFFT program performed multiple sequence alignments (Katoh, 2002). MAFFT achieves performance gains via multithreading while maintaining accuracy via application of the Fast Fourier Transform on the sequence data to quickly identify homologous regions. Parameters included the --auto and --adjustdirection flags. The former automatically sets algorithm heuristics based on the sequence data and the latter automatically adjusts sequence direction for each entry if the reverse complement is optimal. The calling script redirected standard error into a log file to record alignment progress and heuristic selection. 
+The **mafft** program performed multiple sequence alignments (Katoh, 2002). MAFFT achieves performance gains via multithreading while maintaining accuracy via application of the Fast Fourier Transform on the sequence data to quickly identify homologous regions. Parameters included the “--auto” and “--adjustdirection” flags. The former automatically sets algorithm heuristics based on the sequence data and the latter automatically adjusts sequence direction for each entry if the reverse complement is optimal. The calling script redirected standard error into a log file to record alignment progress and heuristic selection. 
 
 ### Phylogeny
 
@@ -48,21 +48,27 @@ The IQ-TREE program inferred phylogenies (Nguyen et al., 2015). The program perf
 
 ### Molecular Clock
 
-Testing the strict molecular clock hypothesis on the genome, fiber, and hexon nucleotide sequences of each species required the TempEst (Rambaut et al., 2016) and BEAST (Drummond and Bouckaert, 2015). The programs evaluated the clock signal and estimated model parameters respectively. A filtering step removed sequences lacking the collection_date metadata.
+The TempEst program tests the strength of the strict molecular clock hypothesis for a given phylogeny (Rambaut et al., 2016). The program imports a tree file and parses the tip labels to extract the dates, plotting them against the root-to-tip patristic distance and fitting a regression line with an objective function that optimizes the correlation coefficient, R-squared value, or mean-squared residuals. This is an interactive tool that facilitates the identification of outliers that may result from incorrect collection dates, vaccine strains, or contaminated sequence data. An R script automated this process by plotting the model for the cross product of root-to-tip distance metrics and model objective functions. The script invoked the rtt and distRoot function of the ape (Paradis et al., 2019) and adephylo (Jombart et al., 2017) packages.
 
-The TempEst program tests the strength of the strict molecular clock hypothesis for a given phylogeny. It plots the taxon date against the root-to-tip patristic distance and fits a regression line with an objective function that optimizes the correlation coefficient, R-squared value, or mean-squared residuals. This is an interactive tool that facilitates the identification of outliers that may result from incorrect collection dates, vaccine strains, or contaminated sequence data. Model parameters are only useful for data exploration since the variables are dependent. Development of an R script automated this process by plotting the model for the cross product of root-to-tip distance metrics and model objective functions. The script invoked the rtt and distRoot function of the ape (Paradis et al., 2019) and adephylo (Jombart et al., 2017) packages.
+The BEAUti program is a graphical tool that outputs BEAST model parameters as XML files (Drummond and Bouckaert, 2015). The program imports a multiple alignment file and parses the sequence headers to extract the dates. Tip date sampling parameters included a uniform sampling distribution with an uncertainty of 10 years. Model testing from the IQ-TREE logs informed substitution model and base frequency parameter settings. Clock models included the strict clock, relaxed clock with lognormal distribution, and relaxed clock with exponential distribution (Drummond et al., 2006). Tree priors included the Constant Size (Kingman, 1982), Exponential Growth (Griffiths and Tavare, 1994), and Bayesian Skyline (Drummond et al., 2005) coalescent models. The MCMC parameters included a chain length of 108 with 10-3 sampling frequency. Marginal likelihood estimation included the path sampling (PS) / stepping-stone sampling method with 100 steps, chain length 106, sampling frequency 10-3, and Beta path step distribution (Baele et al., 2012, 2013).
 
-The BEAUti program is a graphical tool that outputs BEAST model parameters as XML files.
+BEAUti exported separate XML files representing the cross product of clock and coalescent models while maintaining all other settings and parameters constant. The **beast** program ran the MCMC simulation for each file on a high-performance computing cluster. A job submission script requested 32 processors.
 
 ## References
 
 *	Anisimova, M., Gil, M., Dufayard, J.-F., Dessimoz, C., and Gascuel, O. (2011). Survey of Branch Support Methods Demonstrates Accuracy, Power, and Robustness of Fast Likelihood-based Approximation Schemes. Syst. Biol. 60, 685–699.
+*	Baele, G., Lemey, P., Bedford, T., Rambaut, A., Suchard, M.A., and Alekseyenko, A.V. (2012). Improving the Accuracy of Demographic and Molecular Clock Model Comparison While Accommodating Phylogenetic Uncertainty. Mol. Biol. Evol. 29, 2157–2167.
+*	Baele, G., Li, W.L.S., Drummond, A.J., Suchard, M.A., and Lemey, P. (2013). Accurate Model Selection of Relaxed Molecular Clocks in Bayesian Phylogenetics. Mol. Biol. Evol. 30, 239–243.
 *	Drummond, A.J., and Bouckaert, R.R. (2015). Bayesian Evolutionary Analysis with BEAST (Cambridge: Cambridge University Press).
+*	Drummond, A.J., Rambaut, A., Shapiro, B., and Pybus, O.G. (2005). Bayesian Coalescent Inference of Past Population Dynamics from Molecular Sequences. Mol. Biol. Evol. 22, 1185–1192.
+*	Drummond, A.J., Ho, S.Y.W., Phillips, M.J., and Rambaut, A. (2006). Relaxed Phylogenetics and Dating with Confidence. PLOS Biol. 4, e88.
+*	Griffiths, R.C., and Tavare, S. (1994). Sampling Theory for Neutral Alleles in a Varying Environment. Philos. Trans. Biol. Sci. 344, 403–410.
 *	Hoang, D.T., Chernomor, O., von Haeseler, A., Minh, B.Q., and Vinh, L.S. (2018). UFBoot2: Improving the Ultrafast Bootstrap Approximation. Mol. Biol. Evol. 35, 518–522.
 *	Jombart, T., Dray, S., and Bilgrau, A.E. (2017). adephylo: Exploratory Analyses for the Phylogenetic Comparative Method.
 *	Kalyaanamoorthy, S., Minh, B.Q., Wong, T.K.F., von Haeseler, A., and Jermiin, L.S. (2017). ModelFinder: fast model selection for accurate phylogenetic estimates. Nat. Methods 14, 587–589.
 *	Kans, J. (2019). Entrez Direct: E-utilities on the UNIX Command Line (National Center for Biotechnology Information (US)).
 *	Katoh, K. (2002). MAFFT: a novel method for rapid multiple sequence alignment based on fast Fourier transform. Nucleic Acids Res. 30, 3059–3066.
+*	Kingman, J.F.C. (1982). The coalescent. Stoch. Process. Their Appl. 13, 235–248.
 *	Nguyen, L.-T., Schmidt, H.A., von Haeseler, A., and Minh, B.Q. (2015). IQ-TREE: A Fast and Effective Stochastic Algorithm for Estimating Maximum-Likelihood Phylogenies. Mol. Biol. Evol. 32, 268–274.
 *	Paradis, E., Blomberg, S., Bolker, B., Brown, J., Claude, J., Cuong, H.S., Desper, R., Didier, G., Durand, B., Dutheil, J., et al. (2019). ape: Analyses of Phylogenetics and Evolution.
 *	Rambaut, A., Lam, T.T., Max Carvalho, L., and Pybus, O.G. (2016). Exploring the temporal structure of heterochronous sequences using TempEst (formerly Path-O-Gen). Virus Evol. 2.
