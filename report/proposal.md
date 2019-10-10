@@ -2,13 +2,17 @@
 
 ## Abstract
 
-Human adenovirus B-55 (HAdV-B55) is a re-emergent pathogen that threatens dense populations.
+*Human adenovirus B-55* (HAdV-B55) is a re-emergent pathogen that threatens dense populations.
 
 ## Introduction
 
-The Adenoviridae family includes genera that infect a wide range of hosts and cell types. The Mastadenovirus genus includes species that infect mammalian hosts. They are globally distributed, causing sporadic outbreaks in densely populated regions and close-living quarters. Symptoms range from acute respiratory disease to organ failure, depending on the viral species and host immune strength. Accordingly, individuals with developing or weakened immune systems account for most outbreak deaths.
+The *Adenoviridae* family includes genera that infect a wide range of hosts and cell types. The *Mastadenovirus* genus includes species that infect mammalian hosts. They are globally distributed, causing sporadic outbreaks in densely populated regions and close-living quarters. Symptoms range from acute respiratory disease to organ failure, depending on the viral species and host immune strength. Accordingly, individuals with developing or weakened immune systems account for most outbreak deaths.
+
+The Adenoviridae are nonenveloped, double stranded DNA viruses (Baltimore, 1971). The icosahedral capsid consists of 240 hexon and 12 fiber-projecting penton capsomers forming the faces and vertexes respectively. The coxsackie adenovirus receptor of the host cell recognizes the knob of the fiber while the RGD motif of the penton induces RGD motif mediated structural changes to gain entry (Pettersson, 2019).  
 
 ## Methods
+
+…
 
 ### Data
 
@@ -52,13 +56,20 @@ The TempEst program tests the strength of the strict molecular clock hypothesis 
 
 The BEAUti program is a graphical tool that outputs BEAST model parameters as XML files (Drummond and Bouckaert, 2015). The program imports a multiple alignment file and parses the sequence headers to extract the dates. Tip date sampling parameters included a uniform sampling distribution with an uncertainty of 10 years. Model testing from the IQ-TREE logs informed substitution model and base frequency parameter settings. Clock models included the strict clock, relaxed clock with lognormal distribution, and relaxed clock with exponential distribution (Drummond et al., 2006). Tree priors included the Constant Size (Kingman, 1982), Exponential Growth (Griffiths and Tavare, 1994), and Bayesian Skyline (Drummond et al., 2005) coalescent models. The MCMC parameters included a chain length of 108 with 10-3 sampling frequency. Marginal likelihood estimation included the path sampling (PS) / stepping-stone sampling method with 100 steps, chain length 106, sampling frequency 10-3, and Beta path step distribution (Baele et al., 2012, 2013).
 
-BEAUti exported separate XML files representing the cross product of clock and coalescent models while maintaining all other settings and parameters constant. The **beast** program ran the MCMC simulation for each file on a high-performance computing cluster. A job submission script requested 32 processors.
+BEAUti exported separate XML files representing the cross product of clock and coalescent models while maintaining all other settings and parameters constant. The **beast** program ran the MCMC simulation for each file. The **treeannotator** program subsequently calculated the maximum credibility clade using a 10% state burn-in and minimum posterior probability limit of 50%. A script submitted each job to a high-performance computing cluster queue, requesting 32 processors.
+
+## Results
+
+…
+
+## Discussion
 
 ## References
 
 *	Anisimova, M., Gil, M., Dufayard, J.-F., Dessimoz, C., and Gascuel, O. (2011). Survey of Branch Support Methods Demonstrates Accuracy, Power, and Robustness of Fast Likelihood-based Approximation Schemes. Syst. Biol. 60, 685–699.
 *	Baele, G., Lemey, P., Bedford, T., Rambaut, A., Suchard, M.A., and Alekseyenko, A.V. (2012). Improving the Accuracy of Demographic and Molecular Clock Model Comparison While Accommodating Phylogenetic Uncertainty. Mol. Biol. Evol. 29, 2157–2167.
 *	Baele, G., Li, W.L.S., Drummond, A.J., Suchard, M.A., and Lemey, P. (2013). Accurate Model Selection of Relaxed Molecular Clocks in Bayesian Phylogenetics. Mol. Biol. Evol. 30, 239–243.
+*	Baltimore, D. (1971). Expression of animal virus genomes. Bacteriol. Rev. 35, 235–241.
 *	Drummond, A.J., and Bouckaert, R.R. (2015). Bayesian Evolutionary Analysis with BEAST (Cambridge: Cambridge University Press).
 *	Drummond, A.J., Rambaut, A., Shapiro, B., and Pybus, O.G. (2005). Bayesian Coalescent Inference of Past Population Dynamics from Molecular Sequences. Mol. Biol. Evol. 22, 1185–1192.
 *	Drummond, A.J., Ho, S.Y.W., Phillips, M.J., and Rambaut, A. (2006). Relaxed Phylogenetics and Dating with Confidence. PLOS Biol. 4, e88.
@@ -71,7 +82,9 @@ BEAUti exported separate XML files representing the cross product of clock and c
 *	Kingman, J.F.C. (1982). The coalescent. Stoch. Process. Their Appl. 13, 235–248.
 *	Nguyen, L.-T., Schmidt, H.A., von Haeseler, A., and Minh, B.Q. (2015). IQ-TREE: A Fast and Effective Stochastic Algorithm for Estimating Maximum-Likelihood Phylogenies. Mol. Biol. Evol. 32, 268–274.
 *	Paradis, E., Blomberg, S., Bolker, B., Brown, J., Claude, J., Cuong, H.S., Desper, R., Didier, G., Durand, B., Dutheil, J., et al. (2019). ape: Analyses of Phylogenetics and Evolution.
+*	Pettersson, U. (2019). Encounters with adenovirus. Ups. J. Med. Sci. 1–11.
 *	Rambaut, A., Lam, T.T., Max Carvalho, L., and Pybus, O.G. (2016). Exploring the temporal structure of heterochronous sequences using TempEst (formerly Path-O-Gen). Virus Evol. 2.
 *	Romiti, M., and Cooper, P. (2011). Search Field Descriptions for Sequence Database (National Center for Biotechnology Information (US)).
 *	Spinu, V., Grolemund, G., and Wickham, H. (2018). lubridate: Make Dealing with Dates a Little Easier.
 *	Wickham, H. (2017). tidyverse: Easily Install and Load the “Tidyverse.”
+
