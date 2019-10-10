@@ -6,9 +6,9 @@
 
 ## Introduction
 
-The *Adenoviridae* family includes genera that infect a wide range of hosts and cell types. The *Mastadenovirus* genus includes species that infect mammalian hosts. They are globally distributed, causing sporadic outbreaks in densely populated regions and close-living quarters. Symptoms range from acute respiratory disease to organ failure, depending on the viral species and host immune strength. Accordingly, individuals with developing or weakened immune systems account for most outbreak deaths.
+The *Adenoviridae* family includes genera that infect a wide range of hosts and cell types. The *Mastadenovirus* genus includes species that infect mammalian hosts. They are globally distributed, causing sporadic outbreaks in densely populated regions and close-living quarters. Asymptomatic carriers may expose others via aerosol or fecal-oral transmission (Lynch III and Kajon, 2016). Symptoms range from acute respiratory disease to organ failure, depending on the viral species and host immune strength (Lynch III and Kajon, 2016). Accordingly, individuals with developing or weakened immune systems account for most outbreak deaths.
 
-The Adenoviridae are nonenveloped, double stranded DNA viruses (Baltimore, 1971). The icosahedral capsid consists of 240 hexon and 12 fiber-projecting penton capsomers forming the faces and vertexes respectively. The coxsackie adenovirus receptor of the host cell recognizes the knob of the fiber while the RGD motif of the penton induces RGD motif mediated structural changes to gain entry (Pettersson, 2019).  
+The Adenoviridae are nonenveloped, double stranded DNA viruses (Baltimore, 1971). The icosahedral capsid consists of 240 hexon and 12 fiber-projecting penton capsomers forming the faces and vertexes respectively. The coxsackie adenovirus receptor of the host cell recognizes the knob of the fiber while the RGD motif of the penton induces RGD motif mediated structural changes to gain entry (Pettersson, 2019).
 
 ## Methods
 
@@ -80,6 +80,7 @@ BEAUti exported separate XML files representing the cross product of clock and c
 *	Kans, J. (2019). Entrez Direct: E-utilities on the UNIX Command Line (National Center for Biotechnology Information (US)).
 *	Katoh, K. (2002). MAFFT: a novel method for rapid multiple sequence alignment based on fast Fourier transform. Nucleic Acids Res. 30, 3059–3066.
 *	Kingman, J.F.C. (1982). The coalescent. Stoch. Process. Their Appl. 13, 235–248.
+*	Lynch III, J.P., and Kajon, A.E. (2016). Adenovirus: Epidemiology, Global Spread of Novel Serotypes, and Advances in Treatment and Prevention. Semin. Respir. Crit. Care Med. 37, 586–602.
 *	Nguyen, L.-T., Schmidt, H.A., von Haeseler, A., and Minh, B.Q. (2015). IQ-TREE: A Fast and Effective Stochastic Algorithm for Estimating Maximum-Likelihood Phylogenies. Mol. Biol. Evol. 32, 268–274.
 *	Paradis, E., Blomberg, S., Bolker, B., Brown, J., Claude, J., Cuong, H.S., Desper, R., Didier, G., Durand, B., Dutheil, J., et al. (2019). ape: Analyses of Phylogenetics and Evolution.
 *	Pettersson, U. (2019). Encounters with adenovirus. Ups. J. Med. Sci. 1–11.
@@ -87,4 +88,3 @@ BEAUti exported separate XML files representing the cross product of clock and c
 *	Romiti, M., and Cooper, P. (2011). Search Field Descriptions for Sequence Database (National Center for Biotechnology Information (US)).
 *	Spinu, V., Grolemund, G., and Wickham, H. (2018). lubridate: Make Dealing with Dates a Little Easier.
 *	Wickham, H. (2017). tidyverse: Easily Install and Load the “Tidyverse.”
-
