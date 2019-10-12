@@ -31,6 +31,40 @@ calc_bayes_factor <- function(root)
 			`BF (SS)` = SS - SS[which(clock == "str" & coalescent == "con")]
 		)
 }
+
+plot_tree <- function(tree)
+{
+	tip.date <-
+		enframe(tree@phylo$tip.label, name = NULL) %>% 
+		separate(value, c("lab", "val"), "_") %>% 
+		mutate_at("val", as.Date) %>%
+		pull(val)
+	
+	mrsd <- max(tip.date)
+	lower <- with(tree@data, year(min(mrsd - years(ceiling(height + sapply(height_0.95_HPD, first))), na.rm = T)))
+	upper <- with(tree@data, year(max(mrsd - years(ceiling(height - sapply(height_0.95_HPD, last))), na.rm = T)))
+	
+	ggtree(tree, aes(color = rate), mrsd = mrsd, size = 1) +
+		geom_range(range = "height_0.95_HPD", color = "red", alpha = 0.5, size = 2) +
+		geom_nodelab(aes(x = branch, label = round(posterior, 2)), vjust = -0.5, size = 3, color = "black") +
+		geom_tiplab(align = TRUE, linesize = 0.5, color = "black") + 
+		scale_color_continuous(
+			low = "darkgreen", high = "red", 
+			guide = guide_legend(
+				label.position = "bottom", 
+				label.hjust = 0.5, label.vjust = 0.5, 
+				label.theme = element_text(size = 8, angle = 90)
+			)
+		) +
+		scale_x_continuous(breaks = unique(year(tip.date)), minor_breaks = lower:upper) +
+		theme_tree2() +
+		theme(
+			panel.grid.major.x = element_line(),
+			panel.grid.minor.x = element_line(color = "grey"),
+			axis.text.x = element_text(angle = 90, vjust = 0.5),
+			legend.position = "bottom"
+		)
+}
 ```
 
 ```{r}
@@ -45,64 +79,38 @@ bf <-
 knitr::kable(select(bf, -path))
 ```
 
-```{r}
-tree <-
-	filter(bf, lab == "exp-1") %>% pull(path) %>% head(1) %>% 
-	str_replace(".mle.*", ".mcc.tree") %>% read.beast()
-
-tip.date <-
-	tree@phylo$tip.label %>% 
-	enframe(name = NULL) %>% 
-	separate(value, c("lab", "val"), "_") %>% 
-	mutate_at("val", as.Date) %>%
-	pull(val)
-
-year1 <- year(min(tip.date - years(ceiling(max(tree@data$height, na.rm = T)))))
-year2 <- year(max(tip.date))
-breaks <- unique(c(year1, year(tip.date)))
-```
-
-```{r, fig.width=10, fig.height=8}
-ggtree(tree, aes(color = rate), mrsd = max(tip.date), size = 1) +
-	geom_range(range = "length_0.95_HPD", color = "red", alpha = 0.5, size = 2) +
-	geom_nodelab(aes(x = branch, label = round(posterior, 2)), vjust = -0.5, size = 3, color = "black") +
-	geom_tiplab(align = TRUE, linesize = 0.5, color = "black") + 
-	scale_color_continuous(
-		low = "darkgreen", high = "red", 
-		guide = guide_legend(
-			label.position = "bottom", 
-			label.hjust = 0.5, label.vjust = 0.5, 
-			label.theme = element_text(size = 8, angle = 90)
-		)
-	) +
-	scale_x_continuous(breaks = breaks, minor_breaks = year1:year2) +
-	theme_tree2() +
-	theme(
-		panel.grid.major.x = element_line(),
-		panel.grid.minor.x = element_line(color = "grey"),
-		axis.text.x = element_text(angle = 90, vjust = 0.5),
-		legend.position = "bottom"
-	)
+```{r, fig.height=8, fig.width=10}
+group_by(bf, lab) %>% 
+	top_n(1, `BF (PS)`) %>%
+	pull(path) %>%
+	str_replace("mle.*", "mcc.tree") %>%
+	lapply(read.beast) %>%
+	lapply(plot_tree)
 ```
 
 ```{r, fig.width=10}
-# tree@data %>%
-# 	select(height_median, rate_median) %>%
-# 	filter(complete.cases(.)) %>%
-# 	ggplot(aes(height_median, rate_median)) +
-# 	geom_point() +
-# 	theme_minimal()
-nodeid(tree, c(tree@phylo$tip.label)) %>%
-	enframe(name = NULL, value = "node") %>%
-	merge(tree@data) %>%
-	mutate(date = tip.date) %>%
-	select(date, rate_median) %>%
-	ggplot(aes(date, rate_median)) +
+tree <-
+	filter(bf, lab == label & clock == "rel") %>% pull(path) %>% head(1) %>%
+	str_replace(".mle.*", ".mcc.tree") %>% read.beast()
+
+tip.date <-
+	enframe(tree@phylo$tip.label, name = NULL) %>%
+	separate(value, c("lab", "val"), "_") %>%
+	mutate_at("val", as.Date) %>%
+	pull(val)
+
+filter(tree@data, complete.cases(rate)) %>%
+	ggplot(aes(height, rate)) +
 	geom_point() +
 	theme_minimal()
+
+# nodeid(tree, c(tree@phylo$tip.label)) %>%
+# 	enframe(name = NULL, value = "node") %>%
+# 	merge(tree@data) %>%
+# 	mutate(date = tip.date) %>%
+# 	ggplot(aes(date, rate)) +
+# 	geom_point() +
+# 	theme_minimal()
 ```
 
-```{r}
-
-```
 
