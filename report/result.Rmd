@@ -2,10 +2,36 @@
 library(tidyverse)
 library(ggtree)
 library(lubridate)
+library(BactDating)
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{r}
+calc_rtt <- function(tree)
+{
+	tip.date <- str_split(tree@phylo$tip.label, "_") %>% sapply(last) %>% as.Date(format = "%Y-%m-%d")
+	
+	objective <- c("correlation", "rms", "rsquared")
+	method <- c("patristic", "nNodes", "Abouheif", "sumDD")
+	
+	bind_rows(
+		lapply(objective, function(objective) {
+			x <- ape::rtt(
+				tree@phylo, as.numeric(tip.date), 
+				ncpu = parallel::detectCores(), 
+				objective = objective
+			)
+			bind_rows(
+				lapply(method, function(method) {
+					enframe(suppressWarnings(adephylo::distRoot(x, method = method[1]))) %>% 
+						mutate(date = tip.date, objective = objective, method = method) %>%
+						rename(dist = value)
+				})
+			)
+		})
+	)
+}
+
 parse_mle <- function(path)
 {
 	result <-
@@ -32,7 +58,7 @@ calc_bayes_factor <- function(root)
 		)
 }
 
-plot_tree <- function(tree)
+plot_chronogram <- function(tree)
 {
 	tip.date <-
 		enframe(tree@phylo$tip.label, name = NULL) %>% 
@@ -45,7 +71,7 @@ plot_tree <- function(tree)
 	upper <- with(tree@data, year(max(mrsd - years(ceiling(height - sapply(height_0.95_HPD, last))), na.rm = T)))
 	
 	ggtree(tree, aes(color = rate), mrsd = mrsd, size = 1) +
-		geom_range(range = "height_0.95_HPD", color = "red", alpha = 0.5, size = 2) +
+		geom_range(range = "length_0.95_HPD", color = "red", alpha = 0.5, size = 2) +
 		geom_nodelab(aes(x = branch, label = round(posterior, 2)), vjust = -0.5, size = 3, color = "black") +
 		geom_tiplab(align = TRUE, linesize = 0.5, color = "black") + 
 		scale_color_continuous(
@@ -65,6 +91,43 @@ plot_tree <- function(tree)
 			legend.position = "bottom"
 		)
 }
+
+plot_rate_effect <- function(tree)
+{
+	enframe(tree@phylo$tip.label, name = NULL, value = "label") %>%
+		separate(label, c("acc.ver", "date"), "_", remove = F) %>%
+		mutate_at("date", as.Date) %>%
+		mutate(node = nodeid(tree, label)) %>%
+		merge(tree@data) %>%
+		ggplot(aes(date, rate)) +
+		geom_point() +
+		geom_errorbar(aes(ymin = sapply(rate_0.95_HPD, first), ymax = sapply(rate_0.95_HPD, last))) +
+		theme_minimal()
+}
+```
+
+```{r, fig.width=10}
+# dst <-
+# 	dir("..", pattern = "exp-\\d+", full.names = T) %>% 
+# 	file.path("phy-2.treefile") %>%
+# 	lapply(function(path) {
+# 		mutate(calc_rtt(read.iqtree(path)), lab = str_extract(path, "exp-\\d+"))
+# 	}) %>%
+# 	bind_rows()
+```
+
+```{r, fig.height=6, fig.width=10}
+dir("..", "exp-\\d+", full.names = T) %>% 
+	file.path("phy-2.treefile") %>%
+	lapply(function(path) {
+		tree <- read.iqtree(path)
+		tip.date <- 
+			str_split(tree@phylo$tip.label, "_") %>% 
+			sapply(last) %>% 
+			as.Date(format = "%Y-%m-%d") %>% 
+			as.numeric()
+		suppressWarnings(roottotip(initRoot(tree@phylo, tip.date, 100), tip.date))
+	})
 ```
 
 ```{r}
@@ -79,38 +142,21 @@ bf <-
 knitr::kable(select(bf, -path))
 ```
 
-```{r, fig.height=8, fig.width=10}
+```{r, fig.height=10, fig.width=10}
 group_by(bf, lab) %>% 
 	top_n(1, `BF (PS)`) %>%
 	pull(path) %>%
 	str_replace("mle.*", "mcc.tree") %>%
 	lapply(read.beast) %>%
-	lapply(plot_tree)
+	lapply(plot_chronogram)
 ```
 
-```{r, fig.width=10}
-tree <-
-	filter(bf, lab == label & clock == "rel") %>% pull(path) %>% head(1) %>%
-	str_replace(".mle.*", ".mcc.tree") %>% read.beast()
-
-tip.date <-
-	enframe(tree@phylo$tip.label, name = NULL) %>%
-	separate(value, c("lab", "val"), "_") %>%
-	mutate_at("val", as.Date) %>%
-	pull(val)
-
-filter(tree@data, complete.cases(rate)) %>%
-	ggplot(aes(height, rate)) +
-	geom_point() +
-	theme_minimal()
-
-# nodeid(tree, c(tree@phylo$tip.label)) %>%
-# 	enframe(name = NULL, value = "node") %>%
-# 	merge(tree@data) %>%
-# 	mutate(date = tip.date) %>%
-# 	ggplot(aes(date, rate)) +
-# 	geom_point() +
-# 	theme_minimal()
+```{r, fig.width=10, fig.height=4}
+group_by(bf, lab) %>% 
+	filter(clock == "rel") %>%
+	top_n(1, `BF (PS)`) %>%
+	pull(path) %>%
+	str_replace("mle.*", "mcc.tree") %>%
+	lapply(read.beast) %>%
+	lapply(plot_rate_effect)
 ```
-
-
