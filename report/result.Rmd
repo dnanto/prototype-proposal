@@ -96,24 +96,17 @@ plot_rate_effect <- function(tree)
 {
 	enframe(tree@phylo$tip.label, name = NULL, value = "label") %>%
 		separate(label, c("acc.ver", "date"), "_", remove = F) %>%
-		mutate_at("date", as.Date) %>%
+		mutate(date = decimal_date(ymd(date))) %>%
+		mutate(date = max(date) - date) %>%
 		mutate(node = nodeid(tree, label)) %>%
 		merge(tree@data) %>%
 		ggplot(aes(date, rate)) +
 		geom_point() +
 		geom_errorbar(aes(ymin = sapply(rate_0.95_HPD, first), ymax = sapply(rate_0.95_HPD, last))) +
-		theme_minimal()
+		xlab("years in the past") +
+		theme_minimal() +
+		theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
 }
-```
-
-```{r, fig.width=10}
-# dst <-
-# 	dir("..", pattern = "exp-\\d+", full.names = T) %>% 
-# 	file.path("phy-2.treefile") %>%
-# 	lapply(function(path) {
-# 		mutate(calc_rtt(read.iqtree(path)), lab = str_extract(path, "exp-\\d+"))
-# 	}) %>%
-# 	bind_rows()
 ```
 
 ```{r, fig.height=6, fig.width=10}
@@ -160,3 +153,8 @@ group_by(bf, lab) %>%
 	lapply(read.beast) %>%
 	lapply(plot_rate_effect)
 ```
+
+```{r}
+
+```
+

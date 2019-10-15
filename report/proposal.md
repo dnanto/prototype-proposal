@@ -4,11 +4,29 @@
 
 *Human adenovirus B-55* (HAdV-B55) is a re-emergent pathogen that threatens dense populations.
 
+## Significance
+
+Human adenovirus is a clinically relevant model organism with significant biotechnology applications. It has a global distribution, causing sporadic outbreaks. The virus threatens populations with close-living quarters, such as military barracks. Consequently, the U.S. military vaccinates recruits against types E4 and B7. Recent outbreaks of different types in civilian populations are on the rise.  B55 is no exception and originally rarely affected military populations. 
+
 ## Introduction
 
-The *Adenoviridae* family includes genera that infect a wide range of hosts and cell types. The *Mastadenovirus* genus includes species that infect mammalian hosts. They are globally distributed, causing sporadic outbreaks in densely populated regions and close-living quarters. Asymptomatic carriers may expose others via aerosol or fecal-oral transmission (Lynch III and Kajon, 2016). Symptoms range from acute respiratory disease to organ failure, depending on the viral species and host immune strength (Lynch III and Kajon, 2016). Accordingly, individuals with developing or weakened immune systems account for most outbreak deaths.
+The *Adenoviridae* family includes genera that infect a wide range of hosts and cell types. The *Mastadenovirus* genus includes species that infect mammalian hosts. They are globally distributed, causing sporadic outbreaks in densely populated regions and close-living quarters. Carriers may expose others via aerosol or fecal-oral transmission, possibly asymptomatically (Lynch III and Kajon, 2016). Symptoms range from acute respiratory disease to organ failure, depending on the viral species and host immune strength (Lynch III and Kajon, 2016). Accordingly, individuals with developing or weakened immune systems account for most outbreak deaths.
 
-The Adenoviridae are nonenveloped, double stranded DNA viruses (Baltimore, 1971). The icosahedral capsid consists of 240 hexon and 12 fiber-projecting penton capsomers forming the faces and vertexes respectively. The coxsackie adenovirus receptor of the host cell recognizes the knob of the fiber while the RGD motif of the penton induces RGD motif mediated structural changes to gain entry (Pettersson, 2019).
+### Biology
+
+The Adenoviridae are class I linear double stranded DNA viruses (Baltimore, 1971). The nonenveloped icosahedral nucleocapsid consists of hexon and penton capsomers forming the faces and vertexes respectively. The coxsackie adenovirus receptor of the host cell recognizes the fiber knob while the penton RGD motif induces structural changes to gain entry (Pettersson, 2019).
+
+### History
+
+In 1953, an epidemic occurred at the Fort Leonard Wood U.S. Army installation in Missouri. A patient presented with pneumonia-like symptoms and provided a throat wash sample that contained the first viral isolate, initially called “adenoid degeneration agent” and later adenovirus (Hllleman and Werner, 1954; Rowe et al., 1953). Subsequent outbreaks resulted in the discovery of other types, including HAdV-B55. This is a re-emergent respiratory pathogen with a B14 genomic backbone and a recombinant hexon partially derived from B11 (Yang et al., 2009). A new typing scheme that includes genomic analysis corrected it’s previous misidentification as B11a due to limitations associated with serological assays with respect to recombination effects (Walsh et al., 2010). 
+
+### Prior Work
+
+…
+
+### Proposal
+
+…
 
 ## Methods
 
@@ -64,6 +82,8 @@ BEAUti exported separate XML files representing the cross product of clock and c
 
 ## Discussion
 
+…
+
 ## References
 
 *	Anisimova, M., Gil, M., Dufayard, J.-F., Dessimoz, C., and Gascuel, O. (2011). Survey of Branch Support Methods Demonstrates Accuracy, Power, and Robustness of Fast Likelihood-based Approximation Schemes. Syst. Biol. 60, 685–699.
@@ -74,6 +94,7 @@ BEAUti exported separate XML files representing the cross product of clock and c
 *	Drummond, A.J., Rambaut, A., Shapiro, B., and Pybus, O.G. (2005). Bayesian Coalescent Inference of Past Population Dynamics from Molecular Sequences. Mol. Biol. Evol. 22, 1185–1192.
 *	Drummond, A.J., Ho, S.Y.W., Phillips, M.J., and Rambaut, A. (2006). Relaxed Phylogenetics and Dating with Confidence. PLOS Biol. 4, e88.
 *	Griffiths, R.C., and Tavare, S. (1994). Sampling Theory for Neutral Alleles in a Varying Environment. Philos. Trans. Biol. Sci. 344, 403–410.
+*	Hllleman, M.R., and Werner, J.H. (1954). Recovery of New Agent from Patients with Acute Respiratory Illness. Proc. Soc. Exp. Biol. Med. 85, 183–188.
 *	Hoang, D.T., Chernomor, O., von Haeseler, A., Minh, B.Q., and Vinh, L.S. (2018). UFBoot2: Improving the Ultrafast Bootstrap Approximation. Mol. Biol. Evol. 35, 518–522.
 *	Jombart, T., Dray, S., and Bilgrau, A.E. (2017). adephylo: Exploratory Analyses for the Phylogenetic Comparative Method.
 *	Kalyaanamoorthy, S., Minh, B.Q., Wong, T.K.F., von Haeseler, A., and Jermiin, L.S. (2017). ModelFinder: fast model selection for accurate phylogenetic estimates. Nat. Methods 14, 587–589.
@@ -86,5 +107,9 @@ BEAUti exported separate XML files representing the cross product of clock and c
 *	Pettersson, U. (2019). Encounters with adenovirus. Ups. J. Med. Sci. 1–11.
 *	Rambaut, A., Lam, T.T., Max Carvalho, L., and Pybus, O.G. (2016). Exploring the temporal structure of heterochronous sequences using TempEst (formerly Path-O-Gen). Virus Evol. 2.
 *	Romiti, M., and Cooper, P. (2011). Search Field Descriptions for Sequence Database (National Center for Biotechnology Information (US)).
+*	Rowe, W.P., Huebner, R.J., Gilmore, L.K., Parrott, R.H., and Ward, T.G. (1953). Isolation of a Cytopathogenic Agent from Human Adenoids Undergoing Spontaneous Degeneration in Tissue Culture. Proc. Soc. Exp. Biol. Med. 84, 570–573.
 *	Spinu, V., Grolemund, G., and Wickham, H. (2018). lubridate: Make Dealing with Dates a Little Easier.
+*	Walsh, M.P., Seto, J., Jones, M.S., Chodosh, J., Xu, W., and Seto, D. (2010). Computational Analysis Identifies Human Adenovirus Type 55 as a Re-Emergent Acute Respiratory Disease Pathogen. J. Clin. Microbiol. 48, 991–993.
 *	Wickham, H. (2017). tidyverse: Easily Install and Load the “Tidyverse.”
+*	Yang, Z., Zhu, Z., Tang, L., Wang, L., Tan, X., Yu, P., Zhang, Y., Tian, X., Wang, J., Zhang, Y., et al. (2009). Genomic Analyses of Recombinant Adenovirus Type 11a in China. J. Clin. Microbiol. 47, 3082–3090.
+
