@@ -1,4 +1,4 @@
-# The B-55’s
+# The B-55’s: I am livin’ on Channel B!
 
 ## Abstract
 
