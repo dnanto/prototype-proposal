@@ -5,7 +5,7 @@ library(tidyverse)
 args <- commandArgs(trailingOnly = T)
 file <- if (length(args) == 0 || args[1] == "-") file("stdin") else args[1]
 
-read_tsv(file, col_names = c("AccessionVersion", "SubType", "SubName")) %>%
+read_tsv(file) %>%
 	bind_cols(
 		.,
 		bind_rows(

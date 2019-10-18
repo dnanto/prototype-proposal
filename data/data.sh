@@ -8,9 +8,12 @@ esearch -db nuccore -query "$query" | \
 blastdbcmd -db db -entry all -outfmt "%a" | \
 	../src/eutil.py esummary - -params "retmode=json" | \
 	tee meta.json | \
-	jq -r ".result | del(.uids) | map([.accessionversion, .subtype, .subname] | @tsv) | .[]" | \
+	{
+		printf "AccessionVersion\tSubType\tSubName\tcreatedate\n"
+		jq -r '.result | del(.uids) | map([.accessionversion, .subtype, .subname, .createdate] | @tsv) | .[]'
+	} | \
 	../src/subtype.R - 2> /dev/null | \
-	../src/lubridate.R - collection_date > meta.tsv 2> /dev/null
+	../src/lubridate.R - collection_date createdate > meta.tsv 2> /dev/null
 
 head -n 1 meta.tsv | tr '\t' '\n' | cat -n | grep collection_date | cut -f 1 | \
 	xargs -I % cut -f 1,% meta.tsv | tail -n +2 | sort -b > date.tsv
