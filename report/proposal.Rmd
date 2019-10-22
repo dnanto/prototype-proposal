@@ -117,6 +117,19 @@ ggplot() +
 ggsave("outbreak.pdf", width = 6.5, height = 2.5)
 ```
 
+```{r}
+dir("..", "exp-\\d+", full.names = T) %>% 
+	file.path("phy-2.log") %>%
+	lapply(function(path) {
+		read_lines(path) %>% .[grep("Criterion:", .)] %>% enframe(name = NULL) %>% mutate(path = path)
+	}) %>%
+	bind_rows() %>%
+	mutate(lab = str_extract(path, "exp-\\d+")) %>%
+	separate(value, c("criterion", "model"), ":") %>%
+	select(-path) %>%
+	spread(criterion, model) %>%
+	select(lab, `Bayesian Information Criterion`, everything())
+```
 
 ```{r, fig.height=4, fig.width=10}
 dir("..", "exp-\\d+", full.names = T) %>% 
@@ -128,8 +141,9 @@ dir("..", "exp-\\d+", full.names = T) %>%
 			sapply(last) %>% 
 			as.Date(format = "%Y-%m-%d") %>% 
 			as.numeric()
-		
+		pdf(str_replace(path, ".treefile", ".signal.pdf"), 6.5, 4)
 		suppressWarnings(roottotip(initRoot(tree@phylo, tip.date, 100), tip.date))
+		dev.off()
 	})
 ```
 
@@ -142,8 +156,15 @@ bf <-
 	mutate(lab = str_extract(path, "exp-\\d+")) %>%
 	arrange(lab, desc(`BF (PS)`)) %>%
 	select(lab, everything())
+```
 
-knitr::kable(select(bf, -path))
+```{r}
+mutate(bf, model = str_extract(path, "\\w+\\.\\w+")) %>%
+	select(lab, model, PS, `BF (PS)`)
+```
+
+```{r}
+select(bf, -path)
 ```
 
 ```{r, fig.height=10, fig.width=10}
