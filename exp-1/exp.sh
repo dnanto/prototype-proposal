@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-blastdbcmd -db ../data/db -entry all -outfmt "%a %l" | \
-	awk '$2 > 34000 { print $1; }' | \
+blastdbcmd -db ../data/db -entry all -outfmt "%a %l %T" | \
+	awk '$2 > 34000 && ($3 == 714978 || $3 == 343463) { print $1; }' | \
 	sort -b | \
 	join -t $'\t' - ../data/date.tsv | \
 	sort -k 2 | \

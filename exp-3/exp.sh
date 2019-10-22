@@ -2,7 +2,7 @@
 
 blastdbcmd -db ../data/db -entry FJ643676.1 -range 30775-31752 > qry.fna
 
-blastn -task megablast -query qry.fna -db ../data/db -outfmt "6 saccver" | \
+blastn -task megablast -query qry.fna -db ../data/db -outfmt "6 saccver" -taxids 714978,343463 | \
 	blastdbcmd -db ../data/db -entry_batch - > lib.fna
 
 glsearch36 -m 8C -T 8 qry.fna lib.fna > hits.tsv

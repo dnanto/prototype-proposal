@@ -7,61 +7,7 @@ library(BactDating)
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-```{r, fig.height=2, fig.width=10}
-path <- "outbreak.xlsx"
-merge(openxlsx::read.xlsx(path, sheet = 1), openxlsx::read.xlsx(path, sheet = 2)) %>%
-	mutate_at(c("date1", "date2"), parse_date_time, orders = c("%b %Y", "%Y")) %>%
-	mutate(date2 = date2 + months(1) - days(1)) %>%
-	ggplot(aes(x = date1, xend = date2, y = country, yend = country)) +
-	geom_segment(aes(color = population), size = 2) +
-	theme_minimal() +
-	theme(legend.position = "bottom")
-```
-
-```{r, fig.height=2, fig.width=10}
-cc.1 <- read_tsv("cc-1.tsv")
-cc.2 <- read_tsv("cc-2.tsv") %>% with(setNames(str_to_lower(value), str_to_lower(name)))
-meta <- read_tsv("../data/meta.tsv")
-
-pattern <- 
-	paste(cc.1$country, cc.1$official, collapse = "") %>% str_split("", simplify = T) %>% t() %>% 
-	unique() %>% str_to_lower() %>% paste(collapse = "") %>% sprintf("[^%s]", .)
-
-mutate(meta, country = recode(str_remove_all(str_to_lower(country), pattern), !!!cc.2)) %>%
-	mutate(country = cc.1$country[amatch(country, cc.1$country, method = "jw", maxDist = Inf)]) %>%
-	merge(cc.1, by = "country", all.x = T) %>%
-	ggplot(aes(collection_date, code3)) +
-	geom_jitter(height = 0.25, alpha = 0.25) + 
-	theme_minimal() +
-	theme(legend.position = "bottom")
-```
-
 ```{r}
-calc_rtt <- function(tree)
-{
-	tip.date <- str_split(tree@phylo$tip.label, "_") %>% sapply(last) %>% as.Date(format = "%Y-%m-%d")
-	
-	objective <- c("correlation", "rms", "rsquared")
-	method <- c("patristic", "nNodes", "Abouheif", "sumDD")
-	
-	bind_rows(
-		lapply(objective, function(objective) {
-			x <- ape::rtt(
-				tree@phylo, as.numeric(tip.date), 
-				ncpu = parallel::detectCores(), 
-				objective = objective
-			)
-			bind_rows(
-				lapply(method, function(method) {
-					enframe(suppressWarnings(adephylo::distRoot(x, method = method[1]))) %>% 
-						mutate(date = tip.date, objective = objective, method = method) %>%
-						rename(dist = value)
-				})
-			)
-		})
-	)
-}
-
 parse_mle <- function(path)
 {
 	result <-
@@ -118,7 +64,8 @@ plot_chronogram <- function(tree)
 			panel.grid.major.x = element_line(),
 			panel.grid.minor.x = element_line(color = "grey"),
 			axis.text.x = element_text(angle = 90, vjust = 0.5),
-			legend.position = "bottom"
+			legend.position = "bottom",
+			text = element_text(family = "mono")
 		)
 }
 
@@ -135,11 +82,43 @@ plot_rate_effect <- function(tree)
 		geom_errorbar(aes(ymin = sapply(rate_0.95_HPD, first), ymax = sapply(rate_0.95_HPD, last))) +
 		xlab("years in the past") +
 		theme_minimal() +
-		theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+		theme(axis.text.x = element_text(angle = 90, vjust = 0.5), text = element_text(family = "mono"))
 }
 ```
 
-```{r, fig.height=6, fig.width=10}
+```{r, fig.height=4, fig.width=10}
+path <- "outbreak.xlsx"
+d1 <-
+	merge(openxlsx::read.xlsx(path, sheet = 1), openxlsx::read.xlsx(path, sheet = 2)) %>%
+	mutate_at(c("date1", "date2"), parse_date_time, orders = c("%b %Y", "%Y")) %>%
+	mutate(date2 = date2 + months(1) - days(1))
+
+cc.1 <- read_tsv("cc-1.tsv")
+cc.2 <- read_tsv("cc-2.tsv") %>% with(setNames(str_to_lower(value), str_to_lower(name)))
+meta <- read_tsv("../data/meta.tsv") %>% filter(taxid %in% c(714978, 343463))
+
+pattern <- 
+	paste(cc.1$country, cc.1$official, collapse = "") %>% str_split("", simplify = T) %>% t() %>% 
+	unique() %>% str_to_lower() %>% paste(collapse = "") %>% sprintf("[^%s]", .)
+
+d2 <-
+	mutate(meta, country = recode(str_remove_all(str_to_lower(country), pattern), !!!cc.2)) %>%
+	mutate(country = cc.1$country[amatch(country, cc.1$country, method = "jw", maxDist = Inf)]) %>%
+	merge(cc.1, by = "country", all.x = T) %>% mutate_at("collection_date", as.POSIXct) %>% 
+	select(-country) %>% rename(country = code3)
+
+ggplot() +
+	geom_jitter(data = d2, aes(x = collection_date, y = country), alpha = 0.25) + 
+	geom_segment(data = d1, aes(x = date1, xend = date2, y = country, yend = country, color = population), size = 3, alpha = 0.75) +
+	xlab("date") +
+	theme_minimal() +
+	theme(legend.position = "bottom", text = element_text(family = "mono"))
+
+ggsave("outbreak.pdf", width = 6.5, height = 2.5)
+```
+
+
+```{r, fig.height=4, fig.width=10}
 dir("..", "exp-\\d+", full.names = T) %>% 
 	file.path("phy-2.treefile") %>%
 	lapply(function(path) {
@@ -149,13 +128,15 @@ dir("..", "exp-\\d+", full.names = T) %>%
 			sapply(last) %>% 
 			as.Date(format = "%Y-%m-%d") %>% 
 			as.numeric()
+		
 		suppressWarnings(roottotip(initRoot(tree@phylo, tip.date, 100), tip.date))
 	})
 ```
 
 ```{r}
 bf <-
-	dir("..", full.names = T, recursive = T, include.dirs = T, pattern = "beast") %>%
+	dir("..", "exp-\\d+", full.names = T) %>% 
+	file.path("beast") %>%
 	lapply(calc_bayes_factor) %>%
 	bind_rows() %>%
 	mutate(lab = str_extract(path, "exp-\\d+")) %>%
