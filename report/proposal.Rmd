@@ -46,10 +46,11 @@ plot_chronogram <- function(tree)
 	lower <- with(tree@data, year(min(mrsd - years(ceiling(height + sapply(height_0.95_HPD, first))), na.rm = T)))
 	upper <- with(tree@data, year(max(mrsd - years(ceiling(height - sapply(height_0.95_HPD, last))), na.rm = T)))
 	
-	ggtree(tree, aes(color = rate), mrsd = mrsd, size = 1) +
-		geom_range(range = "length_0.95_HPD", color = "red", alpha = 0.5, size = 2) +
-		geom_nodelab(aes(x = branch, label = round(posterior, 2)), vjust = -0.5, size = 3, color = "black") +
-		geom_tiplab(align = TRUE, linesize = 0.5, color = "black") + 
+	p <-
+		ggtree(tree, aes(color = rate), mrsd = mrsd, size = 1) +
+		geom_range(range = "length_0.95_HPD", color = "red", alpha = 0.5, size = 1) +
+		geom_nodelab(aes(x = branch, label = round(posterior, 2)), vjust = -0.5, size = 2, color = "black") +
+		geom_tiplab(align = TRUE, linesize = 0.5, color = "black", size = 2) + 
 		scale_color_continuous(
 			low = "darkgreen", high = "red", 
 			guide = guide_legend(
@@ -64,9 +65,13 @@ plot_chronogram <- function(tree)
 			panel.grid.major.x = element_line(),
 			panel.grid.minor.x = element_line(color = "grey"),
 			axis.text.x = element_text(angle = 90, vjust = 0.5),
-			legend.position = "bottom",
-			text = element_text(family = "mono")
+			legend.position = "none",
+			text = element_text(family = "mono", size = 6)
 		)
+	
+	ggsave(str_replace(tree@file, ".tree", ".pdf"), width = 6.5, height = 4)
+	
+	p
 }
 
 plot_rate_effect <- function(tree)
@@ -185,4 +190,3 @@ group_by(bf, lab) %>%
 	lapply(read.beast) %>%
 	lapply(plot_rate_effect)
 ```
-
